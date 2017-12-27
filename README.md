@@ -1,2 +1,3 @@
-# codingdavinciost2018
-Some helper projects for organizing / supporting Coding da Vinci Ost 2018
+# Coding da Vinci Ost 2018
+
+Some helper projects for organizing / supporting [Coding da Vinci Ost 2018](https://codingdavinci.de/events/ost/)
