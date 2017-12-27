@@ -17,6 +17,7 @@ interface GeoJSONWriter {
 	def static void writeFile(String content, String fileName) {
 		val out = new File(fileName)
 		out.parentFile.mkdirs
+		out.createNewFile
 		val fos = new FileOutputStream(out)
 		val osw = new OutputStreamWriter(fos, "UTF-8")
 		val fw = new BufferedWriter(osw)
