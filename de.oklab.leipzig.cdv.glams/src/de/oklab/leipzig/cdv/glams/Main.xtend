@@ -18,6 +18,7 @@ import org.geojson.FeatureCollection
 import org.geojson.Point
 
 import static extension de.oklab.leipzig.cdv.glams.GeoJSONWriter.*
+import static extension de.oklab.leipzig.cdv.glams.AdministrativeBoundaries.*
 
 class Main {
 	private static val MAPPER = new ObjectMapper
@@ -47,6 +48,9 @@ class Main {
 			if(geometry !== null) {
 				if(osmElement.tags !== null) properties.putAll(osmElement.tags)
 				if(osmElement.tags?.get("name") !== null) {
+					if(properties.get("addr:city") === null) {
+						properties.put("addr:city", resolveAddress((geometry as Point).coordinates, 1))
+					}
 					collection.add(it)
 				}
 			}
@@ -55,23 +59,25 @@ class Main {
 	}
 
 	private def static List<Point> parsePointsFromNodes(List<Long> nodeIds) {
-		nodeIds.stream.parallel().map[parsePoint].filter[it !== null].collect(Collectors.toList)
+		nodeIds.stream.parallel().map[parsePoint(1)].filter[it !== null].collect(Collectors.toList)
 	}
 
 	private def static Iterable<Point> parsePointsFromMembers(List<OsmMember> members) {
-		members.stream.parallel().map[ref.parseWays].filter[it !== null].collect(Collectors.toList).flatten
+		members.stream.parallel().map[ref.parseWays(1)].filter[it !== null].collect(Collectors.toList).flatten
 	}
 	
-	private def static Point parsePoint(Long nodeId) {
-		val url = getOverpassRequestURL('''node(«nodeId»)''')
+	private def static Point parsePoint(Long nodeId, int lastPortNo) {
+		if(lastPortNo > 3) return null
+		val url = getOverpassRequestURL('''node(«nodeId»)''', lastPortNo)
 		val function = [OsmElement element | 
 			if(element.lon !== null) return new Point(element.lon, element.lat)
 		]
-		return parse(url, function)
+		val point = parse(url, function)
+		return point ?: parsePoint(nodeId, lastPortNo + 1)
 	}
 	
-	private def static URL getOverpassRequestURL(String query) {
-		new URL('''http://localhost/api/interpreter?data=[out:json][timeout:25];(«query»);out;''')
+	private def static URL getOverpassRequestURL(String query, int lastPortNo) {
+		new URL('''http://localhost:8«lastPortNo»/api/interpreter?data=[out:json][timeout:25];(«query»);out;''')
 	}
 	
 	private def static <T> T parse(URL url, (OsmElement) => T function) {
@@ -89,7 +95,7 @@ class Main {
 		return null
 	}	
 
-	private def static readResponse(URL url) {
+	def static readResponse(URL url) {
 		val connection =  url.openConnection as HttpURLConnection
 		val in = new BufferedReader(new InputStreamReader(connection.inputStream))
 		val sb = new StringBuilder
@@ -102,8 +108,8 @@ class Main {
 	}
 
 
-	private def static List<Point> parseWays(Long wayId) {
-		val url = getOverpassRequestURL('''way(«wayId»)''')
+	private def static List<Point> parseWays(Long wayId, int lastPortNo) {
+		val url = getOverpassRequestURL('''way(«wayId»)''', lastPortNo)
 		val function = [OsmElement element | 
 			if(!element.nodes.nullOrEmpty) return element.nodes.parsePointsFromNodes
 		]
