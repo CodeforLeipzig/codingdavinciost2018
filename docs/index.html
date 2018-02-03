@@ -55,6 +55,9 @@
 			    scriptCharset: "utf-8",
 			    contentType: "application/json; charset=utf-8"
 			});
+			function getOffset(zoomLevel) {
+			   return 0.39 / Math.pow(2, zoomLevel - 6);
+			};
 			$.getJSON("museums.geojson", function(data){
 			    var museumLayer = L.geoJson(data, {style: style});
 				var markers = L.markerClusterGroup({ chunkedLoading: true, chunkProgress: updateProgressBar, 
@@ -68,7 +71,7 @@
 				var registerLayerMouseOver = function() {
 					museumLayer.on('mouseover', function(e) {
 						var coordinates = e.layer.feature.geometry.coordinates;
-						var swapped_coordinates = [coordinates[1], coordinates[0]];
+						var swapped_coordinates = [coordinates[1] + getOffset(map.getZoom()), coordinates[0]];
 						if (map) {
 							var props = e.layer.feature.properties
 							layerPopup = L.popup()
