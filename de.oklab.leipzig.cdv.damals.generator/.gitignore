@@ -33,3 +33,4 @@ node_modules
 # custom
 photos
 processed
+/xtend-gen/

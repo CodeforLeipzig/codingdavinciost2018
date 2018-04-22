@@ -9,7 +9,7 @@ import org.geojson.Point
 import org.junit.Test
 
 import static de.oklab.leipzig.cdv.damals.generator.exif.ExifDataHandler.*
-import static de.oklab.leipzig.cdv.damals.generator.process.CVSParser.*
+import static de.oklab.leipzig.cdv.damals.generator.process.XLSXParser.*
 import static org.junit.Assert.assertEquals
 
 class ExifTest implements ProcessorDefinitions {

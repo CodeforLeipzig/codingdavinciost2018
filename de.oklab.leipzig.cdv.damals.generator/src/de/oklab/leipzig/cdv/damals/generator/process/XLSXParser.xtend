@@ -5,14 +5,15 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.List
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.apache.poi.ss.usermodel.CellType
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class XLSXParser {
-	private static val INDENT = "    "
 
 	public static def Pair<List<String>, List<List<String>>> getKeysAndValues(String inputFile) {
+		val keys = <String>newArrayList
+		val values = <List<String>>newArrayList
+		val intermediateValues = <ArrayListValuedHashMap<String, String>>newArrayList
 		try {
 			val excelFile = new FileInputStream(new File(inputFile))
 			val workbook = new XSSFWorkbook(excelFile)
@@ -21,53 +22,61 @@ class XLSXParser {
 				val datatypeSheet = sheetIterator.next
 				val iterator = datatypeSheet.iterator
 				val keySegments = newArrayList
-				val keys = <String>newArrayList
-				val values = <List<String>>newArrayList
 				val multiMap = new ArrayListValuedHashMap<String, String>()
 				while (iterator.hasNext) {
 					val currentRow = iterator.next
 					val cellIterator = currentRow.iterator
 					if (cellIterator.hasNext) {
-						val currentCell = cellIterator.next()
-						if (currentCell.cellType == CellType.STRING) {
-							val key = currentCell.stringCellValue
-							if (key.startsWith(INDENT)) {
-								if (!keySegments.empty) {
-									keySegments.clear
-								}
+						val currentCell = cellIterator.next
+						val key = currentCell.stringCellValue
+						if (key.startsWith("        ")) {
+							if (keySegments.size == 3) {
+								keySegments.set(2, key)
+							} else {
 								keySegments.add(key)
-							} else if (key.startsWith(INDENT + INDENT)) {
-								if (keySegments.size == 2) {
-									keySegments.set(1, key)
-								} else {
-									keySegments.add(key)
-								}
-							} else if (key.startsWith(INDENT + INDENT + INDENT)) {
-								if (keySegments.size == 3) {
-									keySegments.set(2, key)
-								} else {
-									keySegments.add(key)
-								}
 							}
-							keys.add(keySegments.join("."))
+						} else if (key.startsWith("      ")) {
+							if (keySegments.size == 3) {
+								keySegments.remove(2)
+								keySegments.set(1, key)
+							} else if (keySegments.size == 2) {
+								keySegments.set(1, key)
+							} else {
+								keySegments.add(key)
+							}
+						} else if (key.startsWith("    ")) {
+							if (!keySegments.empty) {
+								keySegments.clear
+							}
+							keySegments.add(key)
 						}
 					}
 					if (cellIterator.hasNext) {
-						val currentCell = cellIterator.next()
-						if (currentCell.cellType == CellType.STRING) {
-							multiMap.put(keySegments.join("."), currentCell.stringCellValue)
+						val currentCell = cellIterator.next
+						val key = keySegments.map[trim].join("_")
+						if(!currentCell.stringCellValue.trim.nullOrEmpty) {
+							if(!keys.contains(key)) {
+								keys.add(key)
+							}
+							multiMap.put(key, currentCell.stringCellValue.trim)
 						}
 					}
 				}
-				values.add(multiMap.values.map[toStringValue].toList)
+				intermediateValues.add(multiMap)
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null
+			e.printStackTrace
 		} catch (IOException e) {
-			e.printStackTrace();
-			return null
+			e.printStackTrace
 		}
+		for(intermediateValue : intermediateValues) {
+			val internalList = <String>newArrayList
+			for(key : keys) {
+				internalList.add(intermediateValue.get(key).toStringValue)
+			} 
+			values.add(internalList)
+		}
+		return Pair.of(keys, values)
 	}
 	
 	private static dispatch def toStringValue(Object value) {
