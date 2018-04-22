@@ -10,6 +10,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class XLSXParser {
 
+	private static val DOWNLOAD_URL = "https://speicherwolke.uni-leipzig.de/index.php/s/Mun52I4EYKuVldn?path=%2Fimages_thumbnails/"
+
 	public static def Pair<List<String>, List<List<String>>> getKeysAndValues(String inputFile) {
 		val keys = <String>newArrayList
 		val values = <List<String>>newArrayList
@@ -74,9 +76,21 @@ class XLSXParser {
 			for(key : keys) {
 				internalList.add(intermediateValue.get(key).toStringValue)
 			} 
+			internalList.add(DOWNLOAD_URL + intermediateValue.get(keys.get(0)).toStringValue.toOptionalLowerCase + ".jpg")
+			internalList.add(intermediateValue.get(keys.get(0)).toStringValue)
 			values.add(internalList)
 		}
+		keys.add("URL")
+		keys.add("﻿Archivsignatur")
 		return Pair.of(keys, values)
+	}
+
+	private static def toOptionalLowerCase(String value) {
+		if(!value.startsWith("S") && !"BB045331".equals(value) && !"BB047226".equals(value)) {
+			value.toLowerCase
+		} else {
+			value
+		}
 	}
 	
 	private static dispatch def toStringValue(Object value) {

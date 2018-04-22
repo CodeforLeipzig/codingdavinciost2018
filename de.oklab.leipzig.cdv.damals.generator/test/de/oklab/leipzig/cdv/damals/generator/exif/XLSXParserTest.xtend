@@ -10,10 +10,10 @@ class XLSXParserTest {
 	@Test
 	def void testGetKeysAndValues() {
 		val values = getKeysAndValues(System.getProperty("user.dir") + "/res/Metadaten_SGM.xlsx");
-		assertEquals("number of description keys", 42, values.key.size)
+		assertEquals("number of description keys", 44, values.key.size)
 		assertEquals("number of photos", 71, values.value.size)
 		for(value : values.value) {
-			assertEquals("each row with same count as keys", 42, value.size)
+			assertEquals("each row with same count as keys", 44, value.size)
 		}
 	}
 }

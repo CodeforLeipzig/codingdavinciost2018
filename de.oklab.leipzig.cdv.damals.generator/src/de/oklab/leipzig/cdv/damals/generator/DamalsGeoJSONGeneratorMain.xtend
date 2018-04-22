@@ -16,10 +16,22 @@ import static de.oklab.leipzig.cdv.damals.generator.process.XLSXParser.*
 class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 
 	def static void main(String[] args) {
+		generateFromCSV
+		//generateFromExcel	
+	}
+
+	private def static void generateFromCSV() {
+		val input = System.getProperty("user.dir") + "/res/StadtAL_CodingDaVinci.csv"
+		val keysAndValues = getKeysAndValues(input)
+		val featureCollection = fillFeatureCollection(keysAndValues)
+		featureCollection.writeFile("res/csv_photos.geojson")
+	}
+
+	private def static void generateFromExcel() {
 		val input = System.getProperty("user.dir") + "/res/Metadaten_SGM.xlsx"
 		val keysAndValues = getKeysAndValues(input)
 		val featureCollection = fillFeatureCollection(keysAndValues)
-		featureCollection.writeFile("res/leipzig_photos.geojson")
+		featureCollection.writeFile("res/xlsx_photos.geojson")
 	}
 	
 	protected def static FeatureCollection fillFeatureCollection(Pair<List<String>, List<List<String>>> keysAndValues) {

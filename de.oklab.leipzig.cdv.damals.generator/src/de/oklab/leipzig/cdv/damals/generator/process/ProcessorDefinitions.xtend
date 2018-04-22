@@ -38,7 +38,7 @@ interface ProcessorDefinitions {
 		add(lizenzProc)
 	] 
 	
-	val ID_PROCESSOR = new Processor("INV_NR")
+	val ID_PROCESSOR = new Processor("﻿Archivsignatur")
 	val POINT_PROCESSOR = new Processor("GEOKOORDINATEN_MOTIV", [String a | new Point(a.replace(',', '.').toLngLatAlt)])
 	
 }
