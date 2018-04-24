@@ -34,10 +34,9 @@ class NominatimClient {
 	private def static <T> T parse(URL url, (Nominatim) => T function) {
 		val content = url.readResponse
 		try {
-			val nominatims = MAPPER.readValue(content, Nominatims)
-			val elements = nominatims?.nominatims
-			if(!elements.nullOrEmpty) {
-				val	element = elements.get(0)
+			val Nominatim [] nominatims = MAPPER.readValue(content, NominatimHelper.nominatimArrayClass)
+			if(!nominatims.nullOrEmpty) {
+				val	element = nominatims.filter[!lat.nullOrEmpty && !lon.nullOrEmpty].head
 				return function.apply(element)				
 			}
 		} catch(JsonParseException jpe) {
