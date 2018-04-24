@@ -1,6 +1,8 @@
 package de.oklab.leipzig.cdv.damals.generator
 
+import de.oklab.leipzig.cdv.damals.generator.process.CSVParser
 import de.oklab.leipzig.cdv.damals.generator.process.ProcessorDefinitions
+import de.oklab.leipzig.cdv.damals.generator.process.XLSXParser
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Arrays
@@ -9,9 +11,7 @@ import org.geojson.Feature
 import org.geojson.FeatureCollection
 import org.geojson.Point
 
-
 import static extension de.oklab.leipzig.cdv.damals.generator.process.GeoJSONWriter.*
-import static de.oklab.leipzig.cdv.damals.generator.process.XLSXParser.*
 
 class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 
@@ -22,14 +22,14 @@ class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 
 	private def static void generateFromCSV() {
 		val input = System.getProperty("user.dir") + "/res/StadtAL_CodingDaVinci.csv"
-		val keysAndValues = getKeysAndValues(input)
+		val keysAndValues = CSVParser.getKeysAndValues(input)
 		val featureCollection = fillFeatureCollection(keysAndValues)
 		featureCollection.writeFile("res/csv_photos.geojson")
 	}
 
 	private def static void generateFromExcel() {
 		val input = System.getProperty("user.dir") + "/res/Metadaten_SGM.xlsx"
-		val keysAndValues = getKeysAndValues(input)
+		val keysAndValues = XLSXParser.getKeysAndValues(input)
 		val featureCollection = fillFeatureCollection(keysAndValues)
 		featureCollection.writeFile("res/xlsx_photos.geojson")
 	}
