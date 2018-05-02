@@ -12,12 +12,14 @@ import org.geojson.FeatureCollection
 import org.geojson.Point
 
 import static extension de.oklab.leipzig.cdv.damals.generator.process.GeoJSONWriter.*
+import java.io.FileWriter
+import java.io.File
 
 class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 
 	def static void main(String[] args) {
 		generateFromCSV
-		//generateFromExcel	
+		generateFromExcel	
 	}
 
 	private def static void generateFromCSV() {
@@ -30,8 +32,20 @@ class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 	private def static void generateFromExcel() {
 		val input = System.getProperty("user.dir") + "/res/Metadaten_SGM.xlsx"
 		val keysAndValues = XLSXParser.getKeysAndValues(input)
+		writeCSV(keysAndValues, System.getProperty("user.dir") + "/res/Metadaten_SGM.csv")		
 		val featureCollection = fillFeatureCollection(keysAndValues)
 		featureCollection.writeFile("res/xlsx_photos.geojson")
+	}
+	
+	private def static void writeCSV(Pair<List<String>, List<List<String>>> keysAndValues, String fileName) {
+		val header = keysAndValues.key
+		val values = keysAndValues.value
+		val sb = new StringBuilder
+		sb.append(header.join(";")).append("\n")
+		values.forEach(value | sb.append(value.map[it.replace("\"", "'")].map[if(it.contains(";")) '''"«it»"''' else it].join(";")).append("\n"))
+		val fileWriter = new FileWriter(new File(fileName))
+		fileWriter.write(sb.toString)
+		fileWriter.close
 	}
 	
 	protected def static FeatureCollection fillFeatureCollection(Pair<List<String>, List<List<String>>> keysAndValues) {

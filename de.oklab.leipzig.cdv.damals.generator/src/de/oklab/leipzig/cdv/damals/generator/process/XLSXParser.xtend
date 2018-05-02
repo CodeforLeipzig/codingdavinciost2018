@@ -10,7 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class XLSXParser {
 
-	private static val DOWNLOAD_URL = "https://speicherwolke.uni-leipzig.de/index.php/s/Mun52I4EYKuVldn?path=%2Fimages_thumbnails/"
+	private static val DOWNLOAD_URL = "https://speicherwolke.uni-leipzig.de/index.php/s/Mun52I4EYKuVldn?path=%2Fimages_thumbnails#/images_thumbnails/"
 
 	public static def Pair<List<String>, List<List<String>>> getKeysAndValues(String inputFile) {
 		val keys = <String>newArrayList
