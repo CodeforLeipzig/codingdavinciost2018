@@ -30,13 +30,13 @@ class ExifDataSetterMain implements ProcessorDefinitions {
 			val coordinates = (POINT_PROCESSOR.apply(values, keys) as Point)?.coordinates
 			val imgDesc = (ImageDescription.builder => [
 				coord = coordinates
-				title = String.valueOf(titelProc.apply(values, keys))
-				photographer = (fotografProc.apply(values, keys) as List<String>).join(";")
-				imageDescription = String.valueOf(beschreibungMotivProc.apply(values, keys))
-				dateTime = String.valueOf(datierungKonkretProc.apply(values, keys))
-				comment = String.valueOf(strassennameMotivProc.apply(values, keys))
-				tags = (schlagwortProc.apply(values, keys) as List<String>).join(";")
-				license = String.valueOf(lizenzProc.apply(values, keys))
+				title = String.valueOf((descriptionProc.apply(values, keys) as List<String>).get(0))
+				photographer = String.valueOf(photographerProc.apply(values, keys))
+				imageDescription = (descriptionProc.apply(values, keys) as List<String>).join(";")
+				dateTime = String.valueOf(dateProc.apply(values, keys))
+				comment = (streetsProc.apply(values, keys) as List<String>).join(";")
+				tags = (buildingsProc.apply(values, keys) as List<String>).join(";")
+				license = String.valueOf(licenseProc.apply(values, keys))
 			]).build
 			setExifData(inputPath.toFile, outputPath.toFile, imgDesc)
 		}

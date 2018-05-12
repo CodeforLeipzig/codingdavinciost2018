@@ -48,13 +48,13 @@ class ExifTest implements ProcessorDefinitions {
 		val coordinates = (POINT_PROCESSOR.apply(values, keys) as Point)?.coordinates
 		val imgDesc = (ImageDescription.builder => [
 			coord = coordinates
-			title = String.valueOf(titelProc.apply(values, keys))
-			photographer = (fotografProc.apply(values, keys) as List<String>).join(";")
-			imageDescription = String.valueOf(beschreibungMotivProc.apply(values, keys))
-			dateTime = String.valueOf(datierungKonkretProc.apply(values, keys))
-			comment = String.valueOf(strassennameMotivProc.apply(values, keys))
-			tags = (schlagwortProc.apply(values, keys) as List<String>).join(";")
-			license = String.valueOf(lizenzProc.apply(values, keys))
+			title = String.valueOf(descriptionProc.apply(values, keys))
+			photographer = (photographerProc.apply(values, keys) as List<String>).join(";")
+			imageDescription = String.valueOf(descriptionProc.apply(values, keys))
+			dateTime = String.valueOf(dateProc.apply(values, keys))
+			comment = String.valueOf(streetsProc.apply(values, keys))
+			tags = (buildingsProc.apply(values, keys) as List<String>).join(";")
+			license = String.valueOf(licenseProc.apply(values, keys))
 		]).build
 		setExifData(inputPath, outputPath, imgDesc)
 	}
@@ -71,7 +71,7 @@ class ExifTest implements ProcessorDefinitions {
 		val inputFileName = inputPath.name
 		val values = valuesList.findFirst[v|inputFileName.equalsIgnoreCase(
 			String.valueOf(ID_PROCESSOR.apply(v, keys)) + ".jpeg")]
-		val licenses = lizenzProc.apply(values, keys)
+		val licenses = licenseProc.apply(values, keys)
 		assertEquals("https://creativecommons.org/licenses/by-sa/4.0/", licenses)	
 	}
 		

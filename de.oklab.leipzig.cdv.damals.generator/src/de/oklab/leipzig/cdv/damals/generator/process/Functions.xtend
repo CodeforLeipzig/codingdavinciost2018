@@ -48,7 +48,7 @@ class Functions {
 			var changed = coord.substring(COORD_STR_START.length)
 			changed = changed.substring(1, changed.length - 1)
 			val coords = changed.split(" ").map[Double.valueOf(it)]
-			return new LngLatAlt(coords.get(0), coords.get(1))
+			return new LngLatAlt(coords.get(1), coords.get(0))
 		}
 		return null
 	}	

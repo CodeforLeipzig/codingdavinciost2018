@@ -19,7 +19,7 @@ class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 
 	def static void main(String[] args) {
 		generateFromCSV
-		generateFromExcel	
+//		generateFromExcel	
 	}
 
 	private def static void generateFromCSV() {
@@ -57,10 +57,10 @@ class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 				id = String.valueOf(ID_PROCESSOR.apply(values, keys))
 				PROP_PROCESSORS.forEach(proc|proc.apply(properties, values, keys))
 				geometry = POINT_PROCESSOR.apply(values, keys) as Point
-				val datierungVon = datierungVonProc.apply(values, keys)
+				val datierungVon = dateProc.apply(values, keys)
 				it.properties.put("coordTimes", Arrays.asList(toMilliseconds(datierungVon)))
 			]
-			if((newFeature.geometry as Point).coordinates !== null && newFeature.properties.containsKey("datierungVon")) {
+			if((newFeature.geometry as Point).coordinates !== null && newFeature.properties.containsKey("date")) {
 				newFeatureCollection.add(newFeature)
 			}
 		}
