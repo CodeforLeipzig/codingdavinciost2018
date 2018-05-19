@@ -67,7 +67,7 @@
 			var jsonMimeType = "application/json;charset=UTF-8";
 			$.ajax({
 			    type: "GET",
-			    url: "csv_photos.geojson",
+			    url: "photos.geojson",
 			    beforeSend: function(x) {
 			        if (x && x.overrideMimeType) {
 			            x.overrideMimeType(jsonMimeType);

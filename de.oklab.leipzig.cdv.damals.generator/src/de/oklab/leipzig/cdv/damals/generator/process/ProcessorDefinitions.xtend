@@ -16,7 +16,7 @@ interface ProcessorDefinitions {
 	val dateProc = new Processor("date", "Datierung")
 	val licenseProc = new Processor("license", "Lizenz")
 	
-	val PROP_PROCESSORS = newArrayList => [
+	val PROP_PROCESSORS_CSV = newArrayList => [
 		add(descriptionProc)
 		add(new Processor("location", "Ort"))
 		add(buildingsProc)
@@ -28,6 +28,17 @@ interface ProcessorDefinitions {
 		add(licenseProc)
 		add(new Processor("urlDataset", "URL Datensatz"))
 		add(new Processor("urlImage", "URL Datei"))
+	] 
+
+	val PROP_PROCESSORS_XLSX = newArrayList => [
+		add(new Processor("description", "Beschreibung des Gegenstandes", handleMultipleValuesFun))
+		add(new Processor("location", "Abgebildeter Ort"))
+		add(new Processor("buildings", "Abgebildete Institution", handleMultipleValuesFun))
+		add(new Processor("streets", "Schlagwort-Gruppe_Schlagwort", handleMultipleValuesFun))
+		add(new Processor("photographer", "HERSTELLUNG_KÜNSTLER/HERSTELLER_Name"))
+		add(new Processor("dateExtended", "HERSTELLUNG_DATIERUNG_Datierung verbal"))
+		add(new Processor("date", "Dargestellte Zeit"))
+		add(new Processor("urlImage", "URL"))
 	] 
 	
 	val ID_PROCESSOR = new Processor("﻿Archivsignatur")
