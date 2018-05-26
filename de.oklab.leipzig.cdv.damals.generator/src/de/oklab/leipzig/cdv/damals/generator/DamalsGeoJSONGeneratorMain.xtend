@@ -42,7 +42,10 @@ class DamalsGeoJSONGeneratorMain implements ProcessorDefinitions {
 		//writeCSV(keysAndValues, System.getProperty("user.dir") + "/res/Metadaten_SGM.csv")		
 		val input = System.getProperty("user.dir") + "/res/Metadaten_SGM.csv"
 		val keysAndValues = CSVParser.getKeysAndValues(input)
-		featureCollection.fillFeatureCollection(keysAndValues, PROP_PROCESSORS_XLSX)
+		val filteredValues = keysAndValues.value.filter[!metaDataWithoutImages.contains(it.get(0).toLowerCase)].toList
+		filteredValues.addAll(imagesWithoutMetadata)
+		val filteredKeysAndValues = Pair.of(keysAndValues.key, filteredValues)
+		featureCollection.fillFeatureCollection(filteredKeysAndValues, PROP_PROCESSORS_XLSX)
 	}
 	
 	private def static void writeCSV(Pair<List<String>, List<List<String>>> keysAndValues, String fileName) {
