@@ -1,0 +1,165 @@
+<html>
+	<head>
+		<title>damals Karte</title>
+		<meta charset="UTF-8"/>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fancybox@3.0.1/dist/css/jquery.fancybox.css" />
+		<style>
+			#map{ height: 100% }
+			.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+			.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+		</style>
+	</head>
+	<body>
+		<div id="progress"><div id="progressbar"></div></div>
+		<div id="map" />
+
+		<script type="text/javascript" src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+		<script type="text/javascript" src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fancybox@3.0.1/dist/js/jquery.fancybox.pack.js"></script>
+		<script>
+			function style(feature) {
+			    return {
+			        fillColor: '#FFEDA0',
+			        weight: 2,
+			        opacity: 1,
+			        color: 'white',
+			        fillOpacity: 1
+			    };
+			}
+
+			var scores = 0;
+
+			var blueIcon = new L.Icon.Default({});
+			var redIcon = new L.Icon({
+			    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+			    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+			    iconSize: [25, 41],
+			    iconAnchor: [12, 41],
+			    popupAnchor: [1, -34],
+			    shadowSize: [41, 41]
+			});
+
+			var oldLayer = undefined;
+			var lastCoordinates = undefined;
+
+			var map = L.map('map').setView([51.3399028, 12.3742236], 14)
+			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: 'Map data &#64; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors</a>'
+			}).addTo(map);
+
+			var progress = document.getElementById('progress');
+			var progressBar = document.getElementById('progressbar');
+
+			function updateProgressBar(processed, total, elapsed, layersArray) {
+			    if (elapsed > 1000) {
+			        progress.style.display = 'block';
+			        progressBar.style.width = Math.round(processed / total * 100) + '%';
+			    }
+			    if (processed === total) {
+			        progress.style.display = 'none';
+			    }
+			}
+
+			var realMarkerPosition = undefined;
+			var markerPosition = undefined;
+
+			$.ajaxSetup({
+			    scriptCharset: "utf-8",
+			    contentType: "application/json; charset=utf-8"
+			});
+			var jsonMimeType = "application/json;charset=UTF-8";
+			$.ajax({
+			    type: "GET",
+			    url: "photos.geojson",
+			    beforeSend: function(x) {
+			        if (x && x.overrideMimeType) {
+			            x.overrideMimeType(jsonMimeType);
+			        }
+			    },
+			    dataType: "json",
+			    success: function(data) {
+
+				var init = false;
+
+				map.on('click',
+				  function handleClickOnMap(e) {
+				  	if(init) return;
+				  	
+				    var marker = L.marker(e.latlng, { draggable: true } );
+				    marker.on('dragend', function(e) {
+				      setTimeout(function() {
+				        setMarkerPosition(e.target.latlng ? e.target.latlng : e.latlng);
+				      }, 10);
+				    });
+				    marker.addTo(map);
+				    setMarkerPosition(e.target.latlng ? e.target.latlng : e.latlng);
+				    init = true;
+				  }
+				);				    
+			    }
+			});
+
+			// control that shows state info on hover
+			var info = L.control();
+
+			info.onAdd = function(map) {
+			    this._div = L.DomUtil.create('div', 'info');
+			    this.update();
+			    return this._div;
+			};
+
+			info.update = function(id, props) {
+			    var htmlInner = '<div style="width: 300px;"><h4>Fotos</h4>';
+		        htmlInner += '<h4>Finde den Standort des angezeigten Fotos</h4>'
+				htmlInner += '<button onclick="checkLocation()">Pruefe Position</button>'
+			    htmlInner += '<br /><br /><div id="damalsPhotoContainer"><img src="https://opendata.leipzig.de/dataset/b6345cf9-f6d4-5d46-acb2-54b2fb5f44a8/resource/c56862da-d905-4413-bd84-8fa88300c6e8/download/tmparchivba198110690.jpg" style="width:295px" /></div>'
+				realMarkerPosition = L.latLng(51.34112905, 12.3739930321092)
+				this._div.innerHTML = htmlInner;
+			};
+
+			info.addTo(map);
+			
+			function checkLocation() {
+			    var realMarker = L.marker(realMarkerPosition, { draggable: false } );
+			    realMarker.setIcon(redIcon);
+			    realMarker.addTo(map);
+				
+				var distance = map.distance(markerPosition, realMarkerPosition)
+				var thisRoundScore = 0;
+				if(distance < 50) {
+					thisRoundScore = 100;
+				} else if(distance < 100) {
+					thisRoundScore = 80;
+				} else if(distance < 200) {
+					thisRoundScore = 60;
+				} else if(distance < 400) {
+					thisRoundScore = 60;
+				} else if(distance < 800) {
+					thisRoundScore = 40;
+				} else if(distance < 1500) {
+					thisRoundScore = 20;
+				}
+				scores = scores + thisRoundScore;
+				
+				if(distance > 1000) {
+					distanceStr = (distance / 1000).toPrecision(1) + " km"
+				} else {
+					distanceStr = distance.toFixed(0) + " m"				
+				}
+				
+				alert("Ihr Marker ist " + distanceStr + " vom tatsächlichen Ort entfernt." +
+				 "\nSie bekommen " + thisRoundScore + " Punkte." + 
+				 "\nIhre Punkte nach dieser Runde: " + scores);
+			}
+			
+			function setMarkerPosition(mp) {
+				markerPosition = mp;
+			}
+		</script>
+	</body>
+</html>
