@@ -1,4 +1,5 @@
 //var siteUrl = window.location.protocol + "//" + window.location.host + "/";
+//var siteUrl = "https://damals.in/leipzig/spiel/";
 var siteUrl = "file:///D:/git/maps/codingdavinciost2018/de.oklab.leipzig.cdv.damals.generator/res/";
 requirejs.config({
     baseUrl: siteUrl + "js/",
