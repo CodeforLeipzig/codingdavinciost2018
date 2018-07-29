@@ -1,5 +1,5 @@
 define({
-	geojsonFile: "https://damals.in/leipzig/photos.geojson",
+	geojsonFile: "https://damals.in/leipzig/damals.geojson",
 	mapConfig: {
 		center: [51.3399028, 12.3742236],
 		zoom: 14,
