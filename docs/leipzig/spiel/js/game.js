@@ -6,15 +6,17 @@ define(["jquery", "icons", "fancybox", "leaflet"], function($, icons, fancybox, 
 			if(distance < 50) {
 		        return 100;
 		    } else if(distance < 100) {
-		        return 80;
+		        return 85;
 		    } else if(distance < 200) {
-		        return 60;
+		        return 70;
 		    } else if(distance < 400) {
-		        return 60;
+		        return 55;
 		    } else if(distance < 800) {
 		        return 40;
 		    } else if(distance < 1500) {
-		        return 20;
+		        return 25;
+		    } else {
+		    	return 0;
 		    }
 		};
 		
@@ -39,16 +41,31 @@ define(["jquery", "icons", "fancybox", "leaflet"], function($, icons, fancybox, 
 		        distanceStr = distance.toFixed(0) + " m"				
 		    }
 		    
+		    var lastSentence;
+		    if (gameData.hasNextRound()) {
+		    	lastSentence = "Ihre Punkte nach dieser Runde: " + scores;
+		    } else {
+		    	lastSentence = "Sie haben " + scores + " von 500 Punkten erreicht.";
+		    }
+		    
 		    alert("Ihr Marker ist " + distanceStr + " vom tatsächlichen Ort entfernt." +
 		     "\nSie bekommen " + thisRoundScore + " Punkte." + 
-		     "\nIhre Punkte nach dieser Runde: " + scores);
+		     "\n" + lastSentence);
 		     
-		     
-			$("#checkLocationButton").html('Nächste Runde');
-			$("#checkLocationButton").unbind('click');
-			$("#checkLocationButton").on('click', function(e) {
-	    		nextLocation();
-			});
+		    if (gameData.hasNextRound()) {
+				$("#checkLocationButton").html('Nächste Runde');
+				$("#checkLocationButton").unbind('click');
+				$("#checkLocationButton").on('click', function(e) {
+		    		nextLocation();
+				});
+		    } else {
+				$("#checkLocationButton").html('Neu starten');
+				$("#checkLocationButton").unbind('click');
+				$("#checkLocationButton").on('click', function(e) {
+		    		gameData.resetAll();
+		    		nextLocation();
+				});
+		    } 
 		};		
 		
 		var nextLocation = function() {
@@ -62,6 +79,7 @@ define(["jquery", "icons", "fancybox", "leaflet"], function($, icons, fancybox, 
 			});
 			$("#checkLocationButton").unbind('click');
 			$("#checkLocationButton").html('Prüfe Position');
+			$("#checkLocationButton").prop('disabled', 'disabled');
 			$("#checkLocationButton").on('click', function(e) {
 	    		checkLocation();
 			});
@@ -89,6 +107,7 @@ define(["jquery", "icons", "fancybox", "leaflet"], function($, icons, fancybox, 
 
 		info.addTo(map);
 		
+		$("#checkLocationButton").prop('disabled', 'disabled');
 		$("#checkLocationButton").on('click', function(e) {
     		checkLocation();
 		});

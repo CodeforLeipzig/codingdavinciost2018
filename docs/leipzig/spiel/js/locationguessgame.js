@@ -1,3 +1,4 @@
+//var siteUrl = window.location.protocol + "//" + window.location.host + "/";
 var siteUrl = "https://damals.in/leipzig/spiel/";
 requirejs.config({
     baseUrl: siteUrl + "js/",
