@@ -1,5 +1,4 @@
-//var siteUrl = window.location.protocol + "//" + window.location.host + "/";
-var siteUrl = "file:///D:/git/maps/codingdavinciost2018/de.oklab.leipzig.cdv.damals.generator/res/";
+var siteUrl = "https://damals.in/leipzig/spiel/";
 requirejs.config({
     baseUrl: siteUrl + "js/",
     paths: {
