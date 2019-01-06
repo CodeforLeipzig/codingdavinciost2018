@@ -7,6 +7,9 @@ requirejs.config({
 		"leaflet.ajax": "https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min",
 		"jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min",
 		"fancybox": "https://cdn.jsdelivr.net/npm/fancybox@3.0.1/dist/js/jquery.fancybox.pack"
+	},
+    shim: {
+        "fancybox": ["jquery"]
     }
 });
 require(["mapposition", "map", "game", "data", "leaflet"], function (mapposition, map, game, data, leaflet) {
