@@ -21,7 +21,7 @@ define(["leaflet", "jquery"], function(leaflet, $) {
 			    var marker = leaflet.marker(e.latlng, { draggable: true } );
 			    marker.on('dragend', function(e) {
 			      setTimeout(function() {
-			        mapPositionHandler.setMarkerPosition(e.target.latlng ? e.target.latlng : e.latlng);
+			        mapPositionHandler.setMarkerPosition(e.target._latlng ? e.target._latlng : e._latlng);
 			      }, 10);
 			    });
 			    marker.addTo(markerGroup);
