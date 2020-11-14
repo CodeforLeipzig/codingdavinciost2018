@@ -43,7 +43,8 @@ define(["jquery"], ($) => ({
       if (selectedMuseum != "") {
         state.setLastCoordinates(undefined);
         state.setSelectedMuseum(undefined);
-        state.getMuseumMap().removeLayer(state.getLastMuseumLayer());
+        state.getLastMuseumLayer().clearLayers()
+        state.getMuseumMap().removeLayer(state.getLastClusterLayer());
         data.loadData(state);
       }
     }

@@ -1,4 +1,4 @@
-define(["jquery", "leaflet", "leaflet.ajax", "leaflet.markercluster"], ($, leaflet, leafletAjax, leafletMarkerCluster) => ({
+define(["jquery", "leaflet", "leaflet.ajax"], ($, leaflet, leafletAjax) => ({
 	create: (state) => {
     var museumMap = leaflet.map('map').setView([51.65, 12], 8);
     leaflet.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -12,23 +12,22 @@ define(["jquery", "leaflet", "leaflet.ajax", "leaflet.markercluster"], ($, leafl
   getOffset: (zoomLevel) => {
     return 0.39 / Math.pow(2, zoomLevel - 6);
   },
-  createCircleMarker: (state) => (feature, latlng) => {
-    const selectedMuseum = state.getSelectedMuseum();
+  createMarker: (state) => (feature, latlng) => {
     const lastSelectedMuseum = state.getLastSelectedMuseum();
     const museum = feature.properties["name"];
     state.addMuseum(museum);
-    var options = {
-      radius: 8,
-      fillColor: selectedMuseum && selectedMuseum === feature.properties["name"] ? "red" : "lightgreen",
-      color: "black",
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0.8
-    }
+    var museumIcon = new L.Icon({
+	    // icon source: https://de.wikipedia.org/wiki/Datei:Openstreetmap_Carto_Museum.svg
+	    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Openstreetmap_Carto_Museum.svg',
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      popupAnchor: [7, 0],
+	  });
+    var options = { icon: museumIcon }
     const matchesMuseum = !lastSelectedMuseum || lastSelectedMuseum == 0 || state.getMuseums()[lastSelectedMuseum] == museum;
     if (matchesMuseum) {
       state.setMatchCount(state.getMatchCount() + 1);
-      return L.circleMarker(latlng, options);
+      return L.marker(latlng, options);
     }
   }
 }));

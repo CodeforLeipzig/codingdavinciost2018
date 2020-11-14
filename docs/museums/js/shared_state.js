@@ -4,6 +4,7 @@ define({
     var lastSelectedMuseum;
     var lastCoordinates;
     var lastMuseumLayer;
+    var lastClusterLayer;
     var selectedMuseum;
     var museums = [ " " ];
     var lastHoveredCoords;
@@ -16,6 +17,7 @@ define({
       getLastSelectedMuseum: () => { return lastSelectedMuseum },
       getLastCoordinates: () => { return lastCoordinates },
       getLastMuseumLayer: () => { return lastMuseumLayer },
+      getLastClusterLayer: () => { return lastClusterLayer },
       getSelectedMuseum: () => { return selectedMuseum },
       getLastHoveredCoords: () => { return lastHoveredCoords },
       getInfo: () => { return info },
@@ -27,6 +29,7 @@ define({
       setLastSelectedMuseum: (newLastSelectedMuseum) => { lastSelectedMuseum = newLastSelectedMuseum },
       setLastCoordinates: (newLastCoordinates) => { lastCoordinates = newLastCoordinates },
       setLastMuseumLayer: (newLastMuseumLayer) => { lastMuseumLayer = newLastMuseumLayer },
+      setLastClusterLayer: (newLastClusterLayer) => { lastClusterLayer = newLastClusterLayer },
       setSelectedMuseum: (newSelectedMuseum) => { selectedMuseum = newSelectedMuseum },
       setLastHoveredCoords: (newLastHoveredCoords) => { lastHoveredCoords = newLastHoveredCoords },
       setInfo: (newInfo) => { info = newInfo },

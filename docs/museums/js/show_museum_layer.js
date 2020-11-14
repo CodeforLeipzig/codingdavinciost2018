@@ -1,24 +1,14 @@
 define(["jquery", "leaflet", "leaflet.ajax", "leaflet.markercluster", "map", "progress"], ($, leaflet, leafletAjax, leafletMarkercluster, map, updateProgressBar) => {
   return (state, data) => {
-    function style(feature) {
-      return {
-        fillColor: '#FFEDA0',
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        fillOpacity: 1
-      };
-    };
-    var museumLayer = leaflet.geoJson(data, {style: style, pointToLayer: map.createCircleMarker(state) });
-    //var markers = leaflet.markerClusterGroup({ chunkedLoading: true, chunkProgress: updateProgressBar,
-    //  maxClusterRadius: function (zoom) { return 25; } });
-    //markers.addLayer(museumLayer);
-    state.getMuseumMap().addLayer(museumLayer);
-
+    var clusterLayer = leaflet.markerClusterGroup({ chunkedLoading: true, chunkProgress: updateProgressBar, maxClusterRadius: () => 25 });
+    var museumLayer = leaflet.geoJson(data, { pointToLayer: map.createMarker(state) });
+    clusterLayer.addLayer(museumLayer);
+    state.getMuseumMap().addLayer(clusterLayer);
     registerLayerMouseOver(map, leaflet, state, museumLayer);
     registerLayerMouseOut(state, museumLayer);
     museumLayer.on('click', registerLayerMouseClick(state));
     state.setLastMuseumLayer(museumLayer);
+    state.setLastClusterLayer(clusterLayer);
     state.getInfo().update(state);
   }
 });
