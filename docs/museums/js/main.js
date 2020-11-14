@@ -1,4 +1,4 @@
-var siteUrl = window.location.protocol == "file" ? "file://D:/git/codingdavinciost2018/docs/museums/" : "https://damals.in/museums";
+var siteUrl = window.location.protocol == "file" ? "file://D:/git/codingdavinciost2018/docs/museums/" : "https://damals.in/museums/";
 requirejs.config({
   baseUrl: siteUrl + "js/",
   paths: {
