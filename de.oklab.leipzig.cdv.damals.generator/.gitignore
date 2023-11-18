@@ -35,3 +35,16 @@ csv-photos
 xlsx-photos
 processed
 /xtend-gen/
+
+# Gradle
+**/.gradle
+**/build
+
+IntelliJ
+**/.idea
+**/*.iml
+
+**/.DS_Store
+**/xlsx-photos/
+**/csv-photos/
+**/predefined-photos/

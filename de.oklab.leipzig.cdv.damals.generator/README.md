@@ -1,20 +1,17 @@
 # Preparation of IDE
-1. Download / Install [Xtext IDE](http://www.eclipse.org/Xtext/download.html) 
-2. Import this project into workspace (as Maven project)
-3. Assure you have text file encoding set to UTF-8 and text file line delimiter to unix
-   (Window -> Preferences -> Workspace)
-4. Java should compile to target/classes (Project -> Properties -> Java Build Path)
+1. Download / Install [IntelliJ](https://www.jetbrains.com/idea/download) 
+2. Import this project into workspace (as Gradle project)
 
 # Features
 ## Image Download
 Execute `de.oklab.leipzig.cdv.damals.generator.ImageDownloaderMain` to download all photos 
-from [Fotothek Hermann Vogel-Sammlung ](https://codingdavinci.de/daten/#stadtgeschichtliches_leipzig) 
-as listed as ids in tabs of `res/Metadaten_SGM.xlsx` to local folder `res/photos`.
+from [Fotothek Hermann Vogel-Sammlung ](https://www.stadtmuseum.leipzig.de) 
+as listed as ids in tabs of `src/main/resources/Metadaten_SGM.xlsx` to local folder `src/main/resources/photos`.
 
 ## Exif meta data setter
 Execute `de.oklab.leipzig.cdv.damals.generator.ExifDataSetterMain` to process all photos 
-in local folder `res/photos` to set meta data extracted from `res/Metadaten_SGM.xlsx`
-and store those photos to local folder `res/processed`.
+in local folder `src/main/resources/photos` to set meta data extracted from `src/main/resources/Metadaten_SGM.xlsx`
+and store those photos to local folder `src/main/resources/processed`.
 
 ### Meta data
 There are several standards around plus vendor extensions introducing additional tag fields, see also
@@ -51,10 +48,10 @@ Note, that editing one field in the viewer may set the value to multiple tag fie
 
 ## JSON generator
 Execute `de.oklab.leipzig.cdv.damals.generator.PhotoLocationJSONGenerator` to process all entries from 
-`res/Metadaten_SGM.xlsx` to have the associations between Geo coordinates and image IDs 
-stored as `res/photolocations.json`. 
+`src/main/resources/Metadaten_SGM.xlsx` to have the associations between Geo coordinates and image IDs 
+stored as `src/main/resources/photolocations.json`. 
 
 ## GeoJSON generator
-Run `de.oklab.leipzig.cdv.damals.generator.MauerGeoJSONGeneratorMain` to generate `res/leipzig_photos.geojson`
-out of of `res/Metadaten_SGM.xlsx`
+Run `de.oklab.leipzig.cdv.damals.generator.DamalsGeoJSONGeneratorMain` to generate `src/main/resources/leipzig_photos.geojson`
+out of of `src/main/resources/Metadaten_SGM.xlsx`
 
